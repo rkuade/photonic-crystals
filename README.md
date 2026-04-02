@@ -1,4 +1,4 @@
-# TM-photonic-crystal
+# photonic-crystal
 
 Code to optimize for a structure exhibiting a photonic bandgap.
 
