@@ -108,6 +108,8 @@ if args.init_type=='checkers':
                 designdof[ii,jj] = 0
             else:
                 designdof[ii-1,jj] = 0
+    if args.gpr % 2 == 1:
+        designdof[-1,1::2] = 1.
     designdof = designdof.flatten()
 if args.init_type=='half':
     designdof = 0.5*np.ones(ndof)
