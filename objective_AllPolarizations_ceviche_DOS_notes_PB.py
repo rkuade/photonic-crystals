@@ -14,10 +14,8 @@ import sys
 # frequency at which the dos is being evaluated
 def source_dos(source, Exs, Eys, Ezs, dl, Num_Poles, ii):
     dos = 0
-    Polefactor = 0
-    for nn in range(Num_Poles):
-        Polefactor += -1j*np.exp(1j*(np.pi+nn*2.*np.pi)/(2.*Num_Poles))
-    dos += dl**2 * 0.5 * npa.real(-1j*(np.exp(1j*(np.pi+2.*ii*np.pi)/(2.*Num_Poles))/Polefactor*npa.sum(npa.conj(source) * (Exs+Eys+Ezs))))
+    Polefactor = 1./np.sin(np.pi/(2.*Num_Poles))
+    dos += dl**2 * 0.5 * npa.imag((np.exp(1j*(np.pi+2.*ii*np.pi)/(2.*Num_Poles))/Polefactor*npa.sum(npa.conj(source) * (Exs+Eys+Ezs))))
     return dos
 
 # rescale a vector of continuous variables representing the degrees of freedom 
