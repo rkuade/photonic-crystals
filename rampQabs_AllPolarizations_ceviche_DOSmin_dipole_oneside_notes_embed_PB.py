@@ -204,9 +204,7 @@ for gap in gaplist:
 
     omegas = []
     vac_dos = 0
-    Polefactor = 0
-    for nn in range(args.Num_Poles):
-        Polefactor += -1j*np.exp(1j*(np.pi+nn*2.*np.pi)/(2.*args.Num_Poles))
+    Polefactor = 1./np.sin(np.pi/(2.*args.Num_Poles))
     for nn in range(args.Num_Poles):
         omegas += [omega * (1-np.exp(1j*(np.pi+nn*2.*np.pi)/(2.*args.Num_Poles))/2.*gap)]
         if args.reciprocal_lattice=='fullBZ':
@@ -227,7 +225,7 @@ for gap in gaplist:
                         _,_,vac_fieldz = sim_vac.solve(source*np.exp(1j*(kx*xg+ky*yg)))
                     else:
                         vac_fieldz = 0
-                    vac_dos += dl**2 * 0.5 * np.real(-1j*(np.exp(1j*(np.pi+nn*2.*np.pi)/(2.*args.Num_Poles))/Polefactor*np.sum(np.conj(source) * (vac_fieldx+vac_fieldy+vac_fieldz)*np.exp(-1j*(kx*xg+ky*yg)))))
+                    vac_dos += dl**2 * 0.5 * np.imag((np.exp(1j*(np.pi+nn*2.*np.pi)/(2.*args.Num_Poles))/Polefactor*np.sum(np.conj(source) * (vac_fieldx+vac_fieldy+vac_fieldz)*np.exp(-1j*(kx*xg+ky*yg)))))
         elif args.reciprocal_lattice=='Gamma':
             if args.polarization == 'TE':
                 sim_vac = Yee_TE_FDFD_Gamma_ceviche.fdfd_TEx(omegas[nn], dl, epsVac, [Npml,Npml])
@@ -242,7 +240,7 @@ for gap in gaplist:
                 _,_,vac_fieldz = sim_vac.solve(source)
             else:
                 vac_fieldz = 0
-            vac_dos += dl**2 * 0.5 * np.real(-1j*(np.exp(1j*(np.pi+nn*2.*np.pi)/(2.*args.Num_Poles))/Polefactor*np.sum(np.conj(source)*(vac_fieldx+vac_fieldy+vac_fieldz))))
+            vac_dos += dl**2 * 0.5 * np.imag((np.exp(1j*(np.pi+nn*2.*np.pi)/(2.*args.Num_Poles))/Polefactor*np.sum(np.conj(source)*(vac_fieldx+vac_fieldy+vac_fieldz))))
         elif args.reciprocal_lattice=='file':
             for nxy in range(kpointgrid.shape[0]):
                 kx = 2*np.pi*kpointgrid[nxy,0]
@@ -260,7 +258,7 @@ for gap in gaplist:
                     _,_,vac_fieldz = sim_vac.solve(source*np.exp(1j*(kx*xg+ky*yg)))
                 else:
                     vac_fieldz = 0
-                vac_dos += dl**2 * 0.5 * np.real(-1j*(np.exp(1j*(np.pi+nn*2*np.pi)/(2.*args.Num_Poles))/Polefactor*np.sum(np.conj(source) * (vac_fieldx+vac_fieldy+vac_fieldz) * np.exp(-1j*(kx*xg+ky*yg)))))
+                vac_dos += dl**2 * 0.5 * np.imag((np.exp(1j*(np.pi+nn*2*np.pi)/(2.*args.Num_Poles))/Polefactor*np.sum(np.conj(source) * (vac_fieldx+vac_fieldy+vac_fieldz) * np.exp(-1j*(kx*xg+ky*yg)))))
     opt_data['vac_dos'] = vac_dos
     optfunc = lambda dof, grad: designdof_dos_objective(dof, grad, epsval, design_mask, dl, source, omega, args.Num_Poles, gap, epsVac, Npml, opt_data, Mx, My, args.reciprocal_lattice, kpointgrid, args.polarization)
     lb = np.zeros(ndof)
